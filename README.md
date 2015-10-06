@@ -1,9 +1,12 @@
 SpaceTheremin
 =============
 
-A virtual theremin controlled via the mouse or touchscreen.
+A virtual theremin controlled via the mouse or touchscreen. This app was originally
+released on http://zetacentauri.com
 
-An installable version for Windows is available at:
+An prebuilt installable version for Windows is available in the installer folder.
+
+![SpaceTheremin Screenshot](https://github.com/Xangis/SpaceTheremin/blob/master/images/spacetheremin1.png)
 
 http://zetacentauri.com/software_spacetheremin.htm
 
@@ -23,6 +26,7 @@ Installers for Windows are under the "installer" folder.  There is one for the N
 Install System (NSIS) and one for InnoSetup.  They may or may not be up to date, but
 chances are good that you'll have to fiddle with some paths (your VS project will 
 probably put files into different places, and some things have probably beeen moved).
+That folder also includes prebuilt binaries, but those are likely out of date.
 
 This software is released under the terms of the MIT License.
 
