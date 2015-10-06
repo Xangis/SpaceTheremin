@@ -8,8 +8,6 @@ An prebuilt installable version for Windows is available in the installer folder
 
 ![SpaceTheremin Screenshot](https://github.com/Xangis/SpaceTheremin/blob/master/images/spacetheremin1.png)
 
-http://zetacentauri.com/software_spacetheremin.htm
-
 This application has been tested on Windows and Linux, both 32-bit and 64-bit.
 It is written in C++ and uses wxWidgets for the user interface. On Linux it also
 requires JACK. It works with both wxWidgets 2.8 and 2.9.
