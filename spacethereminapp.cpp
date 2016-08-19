@@ -37,22 +37,7 @@ bool MouseThereminApp::OnInit()
     // to make permanent changes to the code.
     wxInitAllImageHandlers();
 
-#ifdef linux
-    // Create the dialog.  On Linux we have a choice between openal and jack with
-    // jack being the default.  On windows we have OpenAL only.
-// TODO: FIXME: OpenAL is disabled for Linux because sound generation does not work right for it.
-//    if( argc > 1  && (wxString(argv[1]) == wxString( "-openal" )))
-//    {
-//        std::cout << "-openal flag detected.  Using OpenAL for audio." << std::endl;
-//        _spectrumDlg = new MouseThereminDlg(NULL,true);
-//    }
-//    else
-//    {
-//        std::cout << "No -openal flag detected.  Using JACK for audio." << std::endl;
-        _spectrumDlg = new MouseThereminDlg(NULL,false);
-#else
-        _spectrumDlg = new MouseThereminDlg(NULL,true);
-#endif
+    _spectrumDlg = new MouseThereminDlg(NULL,true);
     _spectrumDlg->Show(true);
 
     return true;

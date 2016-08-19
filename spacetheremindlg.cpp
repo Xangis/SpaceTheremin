@@ -12,10 +12,6 @@
 #include <wx/apptrait.h>
 
 MouseThereminDlg* dlg = NULL;
-#ifdef linux
-int process (jack_nframes_t nframes, void *arg) { return dlg->Process( nframes, arg ); };
-void jack_shutdown (void *arg) { dlg->JackShutdown( arg ); };
-#endif
 
 /*!
  * MouseThereminDlg type definition
@@ -54,23 +50,12 @@ MouseThereminDlg::MouseThereminDlg( )
 
 MouseThereminDlg::~MouseThereminDlg()
 {
-#ifdef linux
-    if( !_useopenal )
-	{
-      jack_transport_stop( _jackClient );
-	  jack_client_close( _jackClient );
-	}
-#else
-	_openal->Stop();
-#endif
-	this->Pause();
-	// Give ourselves a few milliseconds for things to stop.
-	Sleep(12);
-}
+    PaError err = Pa_AbortStream( _buffer );
+    err = Pa_CloseStream( _buffer );
+    err = Pa_Terminate();
 
-void jackerror(const char *errorstr)
-{
-    std::cout << "JACK error: '" << errorstr << "'" << std::endl;
+    // Give ourselves a few milliseconds for things to stop.
+    Sleep(12);
 }
 
 MouseThereminDlg::MouseThereminDlg( wxWindow* parent, bool use_openal, wxWindowID id, const wxString& caption, const wxPoint& pos, const wxSize& size, long style )
@@ -86,14 +71,8 @@ bool MouseThereminDlg::Create( wxWindow* parent, bool use_openal, wxWindowID id,
 	_pnlDisplay = NULL;
 	_waveTable = new WaveTable();
     _useopenal = use_openal;
-    _sampleRate = 44100; // Default.  Jack can change it below if he wants to.
+    _sampleRate = 44100; // Default. 
 	// Create a new stereo buffer.
-#ifdef WIN32
-    if( _useopenal )
-	_openal = new OpenALManager(2);
-    else
-        _openal = NULL;
-#endif
     _waveform = NULL;
 	_btnStartStop = NULL;
     _vibratoWaveform;
@@ -126,119 +105,20 @@ bool MouseThereminDlg::Create( wxWindow* parent, bool use_openal, wxWindowID id,
     GetSizer()->SetSizeHints(this);
     Centre();
 
-	// Create wavetables
-	_waveTable->CreateWavetables();
-#ifdef WIN32
-        if( _useopenal )
-	  _openal->Init(0, 0, "Generic Hardware" );
-#endif
-	// Above normal thread priority so we can monitor the sound buffer a little better.
-	if( wxThread::Create(wxTHREAD_JOINABLE) != wxTHREAD_NO_ERROR )
-	{
-		wxMessageBox( _("Unable to create oscillator thread."), _("ERROR"), wxOK );
-		return false;
-	}
-	SetPriority(75);
-	Run();
-        dlg = this;
-#ifdef linux
-        if( !_useopenal )
-        {
-	const char **ports;
-	jack_options_t options = JackNullOption;
-	jack_status_t status;
-	jack_set_error_function(jackerror);
-        _jackClient = jack_client_open ("SpaceTheremin Client", options, &status, NULL );
-	if (_jackClient == NULL) 
-        {
-		fprintf (stderr, "jack_client_open() failed, " 
-			 "status = 0x%2.0x\n", status);
-		if (status & JackServerFailed)
-                {
-			fprintf (stderr, "Unable to connect to JACK server.\n");
-		}
-		exit (1);
-	}
-	if (status & JackServerStarted) 
-        {
-		fprintf (stderr, "JACK server started.\n");
-	}
-	if (status & JackNameNotUnique) 
-        {
-                char * client_name = jack_get_client_name(_jackClient);
-		fprintf (stderr, "Unique name `%s' assigned.\n", client_name);
-	}
-	/* tell the JACK server to call `process()' whenever
-	   there is work to be done.
-	*/
-	jack_set_process_callback (_jackClient, process, 0);
-	/* tell the JACK server to call `jack_shutdown()' if
-	   it ever shuts down, either entirely, or if it
-	   just decides to stop calling us.
-	*/
-	jack_on_shutdown (_jackClient, jack_shutdown, 0);
-	/* display the current sample rate. 
-	 */
-        _sampleRate = jack_get_sample_rate( _jackClient );
-	printf ("Engine sample rate: %d\n", _sampleRate);
-	/* create two ports */
-	_jackIn = jack_port_register (_jackClient, "input", JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
-	_jackOut = jack_port_register (_jackClient, "output", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
-	if ((_jackIn == NULL) || (_jackOut == NULL)) 
-        {
-		fprintf(stderr, "No more JACK ports available.\n");
-		exit (1);
-	}
-	/* Tell the JACK server that we are ready to roll.  Our
-	 * process() callback will start running now. */
-	if (jack_activate (_jackClient)) 
-        {
-		fprintf (stderr, "Cannot activate client.\n");
-		exit (1);
-	}
-        else
-        {
-                fprintf( stderr, "JACK client activated.\n" );
-        }
-	/* Connect the ports.  You can't do this before the client is
-	 * activated, because we can't make connections to clients
-	 * that aren't running.  Note the confusing (but necessary)
-	 * orientation of the driver backend ports: playback ports are
-	 * "input" to the backend, and capture ports are "output" from
-	 * it.
-	 */
-	ports = jack_get_ports (_jackClient, NULL, NULL, JackPortIsPhysical|JackPortIsOutput);
-	if (ports == NULL) 
-        {
-		fprintf(stderr, "No physical capture ports.\n");
-		exit (1);
-	}
+    // Create wavetables
+    _waveTable->CreateWavetables();
 
-	if (jack_connect (_jackClient, ports[0], jack_port_name (_jackIn))) 
-        {
-		fprintf (stderr, "Cannot connect input ports.\n");
-	}
+    // Initialize audio
+    PaError err = Pa_Initialize();
+    if( err != paNoError )
+    {
+        wxMessageBox( _("PortAudio error: %s\n"), wxString::FromAscii(Pa_GetErrorText( err )) );
+    }
 
-	free (ports);
+    // Above normal thread priority so we can monitor the sound buffer a little better.
+    Run();
+    dlg = this;
 
-	ports = jack_get_ports (_jackClient, NULL, NULL, JackPortIsPhysical|JackPortIsInput);
-	if (ports == NULL) 
-        {
-		fprintf(stderr, "No physical playback ports.\n");
-		exit (1);
-	}
-
-	if (jack_connect (_jackClient, jack_port_name (_jackOut), ports[0])) 
-        {
-		fprintf (stderr, "Cannot connect output ports.\n");
-	}
-        else
-        {
-		fprintf (stderr, "Output ports connected.\n");
-	}
-	free (ports);
-        } // end if( !_useopenal )
-#endif
     return true;
 }
 
@@ -426,23 +306,19 @@ void MouseThereminDlg::OnButtonStartStop(wxCommandEvent &event)
 	_started = !_started;
 	if( _started )
 	{
-#ifdef linux
-                if( !_useopenal )
-                jack_transport_start( _jackClient );
-#else
-		_openal->Play();
-#endif
-		_btnStartStop->SetLabel(_("Stop"));
+            value = Pa_AbortStream(_buffer);
+            value = Pa_CloseStream(_buffer);
+            _buffer = NULL;
 	}
 	else
 	{
-#ifdef linux
-                if( !_useopenal )
-                jack_transport_stop( _jackClient );
-#else
-		_openal->Stop();
-#endif
-		_btnStartStop->SetLabel(_("Start"));
+            value = Pa_OpenStream(&_buffer, NULL, device, _sampleRate, BUFFERLENGTH, paNoFlag, AudioCallback, this );
+            if( value != 0 )
+            {
+                wxMessageBox(wxString::FromAscii(Pa_GetErrorText(value)));
+                return;
+            }
+            value = Pa_StartStream( _buffer );
 	}
 	event.Skip(false);
 }
@@ -452,12 +328,13 @@ void MouseThereminDlg::OnMouseEnter( wxMouseEvent& event )
 {
 	if( _started )
 	{
-#ifdef linux
-                if( !_useopenal )
-                  jack_transport_start( _jackClient );
-#else
-		  _openal->Play();
-#endif
+            value = Pa_OpenStream(&_buffer, NULL, device, _sampleRate, BUFFERLENGTH, paNoFlag, AudioCallback, this );
+            if( value != 0 )
+            {
+                wxMessageBox(wxString::FromAscii(Pa_GetErrorText(value)));
+                return;
+            }
+            value = Pa_StartStream( _buffer );
 	}
 	event.Skip(false);
 }
@@ -467,7 +344,9 @@ void MouseThereminDlg::OnMouseLeave( wxMouseEvent& )
 {
 	if( _started )
 	{
-//		_openal->Stop();
+            //value = Pa_AbortStream(_buffer);
+            //value = Pa_CloseStream(_buffer);
+            //_buffer = NULL;
 	}
 }
 
@@ -490,7 +369,7 @@ void MouseThereminDlg::OnMouseMove(wxMouseEvent& event)
 	event.Skip();
 }
 
-void* MouseThereminDlg::Entry()
+int AudioCallback( const void *input, void *output, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void *userData )
 {
 	static int mismatches = 0;
 	static int matches = 0;
@@ -501,7 +380,6 @@ void* MouseThereminDlg::Entry()
 		//
 		// We may need to tinker with data size and the timeBeginPeriod()
 		// and timeEndPeriod() functions from winmm.lib.
-#ifdef WIN32
 		if( _useopenal && _openal->IsBufferPlaying(0) )
 		{
 			int left = _openal->GetNumSamplesQueued(0);
@@ -549,7 +427,6 @@ void* MouseThereminDlg::Entry()
 				_openal->FillBuffer(1, (unsigned char*)&buffer, 1764, _sampleRate );
 			}
 		}
-#endif
 		Sleep(1);
 	}
 	return NULL;
@@ -698,61 +575,3 @@ void MouseThereminDlg::OnClose( wxCloseEvent& event )
 	event.Skip(false);
 }
 
-#ifdef linux
-void MouseThereminDlg::JackShutdown (void *arg)
-{
-	fprintf (stderr, "JACK shutdown\n");
-	// exit (0);
-	abort();
-}
-
-// We don't have to use if( _useopenal ) calls here because we use them
-// during init.  If openal is on we will never have jack created and initialized
-// and will never get to this point.
-int MouseThereminDlg::Process (jack_nframes_t nframes, void *arg)
-{
-	jack_default_audio_sample_t *in, *out;
-	jack_transport_state_t ts = jack_transport_query(_jackClient, NULL);
-
-	if (ts == JackTransportRolling)
-        {
-		double samplesPerPeriod = _sampleRate / ((_pitch * (_maxFreq-_minFreq))+_minFreq);
-		// Get sampleSkip expressed as a percentage.
-		double sampleSkip = 1.0 / samplesPerPeriod;
-                double vibratoPerPeriod = _sampleRate / (_vibratoPitch * _vibratoFreq->GetMax());
-                double vibratoSkip = 1.0 / vibratoPerPeriod;
-		// Fill the buffer with samples.
-		int count;
-		float * buffer = new float[nframes];
-		memset( buffer, 0, (nframes * sizeof(float)) );
-		for( count = 0; count < nframes; count++ )
-		{
-			while( _phase > 1.0 )
-			{
-				_phase -= 1.0;
-			}
-                        while( _vibratoPhase > 1.0 )
-                        {
-                                _vibratoPhase -= 1.0;
-                        }
-			buffer[count] = ((_waveTable->_waveformTable[_wave][(int)(_phase * TABLESIZE)] * (1.0 - _vibratoDepth)) + // Base waveform
-                            (_waveTable->_waveformTable[_vibratoWave][(int)(_vibratoPhase * TABLESIZE)] * _vibratoDepth )) * // Vibrato
-                             _volume;
-			_phase += sampleSkip;
-                        _vibratoPhase += vibratoSkip;
-		}
-
-		//in = (jack_default_audio_sample_t *)jack_port_get_buffer (_jackIn, nframes);
-		out = (jack_default_audio_sample_t *)jack_port_get_buffer (_jackOut, nframes);
-		memcpy (out, buffer, (sizeof (float) * nframes));
-		//std::cout << "Wrote " << nframes << " frames to out buffer." << std::endl;
-                delete[] buffer;
-	}
-        else if (ts == JackTransportStopped)
-        {
-                //std::cout << "Jack transport stopped, doing nothing." << std::endl;
-	}
-
-	return 0;
-}
-#endif

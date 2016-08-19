@@ -7,12 +7,7 @@
 #include "wx/wx.h"
 #include "wx/spinctrl.h"
 #include "wx/thread.h"
-//#include "Audio/OpenALManager.h"
-#ifdef linux
-#include <jack/jack.h>
-#else
-#include "OpenALManager.h"
-#endif
+#include "portaudio.h"
 #include "Wavetable.h"
 
 /*!
@@ -52,7 +47,7 @@ class wxSpinCtrl;
 /*!
  * MouseThereminDlg class declaration
  */
-class MouseThereminDlg: public wxDialog, public wxThread
+class MouseThereminDlg: public wxDialog
 {
     DECLARE_DYNAMIC_CLASS( MouseThereminDlg )
     DECLARE_EVENT_TABLE()
@@ -94,7 +89,6 @@ public:
     wxIcon GetIconResource( const wxString& name );
     /// Should we show tooltips?
     static bool ShowToolTips();
-	void* Entry();
 private:
     wxButton* _btnStartStop;
     wxPanel* _pnlDisplay;
@@ -128,17 +122,7 @@ private:
     bool _useopenal;
 	wxIcon _icon;
 	WaveTable* _waveTable;
-#ifdef linux
-public:
-	int Process (jack_nframes_t nframes, void *arg);
-	void JackShutdown (void *arg);
-private:
-	jack_port_t * _jackIn;
-	jack_port_t * _jackOut;
-	jack_client_t * _jackClient;
-#else
-	OpenALManager* _openal;
-#endif
+        PaStream *_buffer;
 };
 
 #endif
