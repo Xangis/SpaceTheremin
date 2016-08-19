@@ -83,6 +83,7 @@ MouseThereminDlg::MouseThereminDlg( wxWindow* parent, bool use_openal, wxWindowI
  */
 bool MouseThereminDlg::Create( wxWindow* parent, bool use_openal, wxWindowID id, const wxString& caption, const wxPoint& pos, const wxSize& size, long style )
 {
+	_pnlDisplay = NULL;
 	_waveTable = new WaveTable();
     _useopenal = use_openal;
     _sampleRate = 44100; // Default.  Jack can change it below if he wants to.
@@ -253,6 +254,10 @@ void MouseThereminDlg::CreateControls()
 #else
     _image.LoadFile( _("background.jpg"), wxBITMAP_TYPE_JPEG );
 #endif
+	if( !_image.IsOk() )
+	{
+		wxMessageBox(_("Could not load background.jpg"), _("Image Not Found"));
+	}
 
 	_bitmap = wxBitmap(_image);
 	if( _icon.LoadFile(_("theremin.ico"), wxBITMAP_TYPE_ICO ))
@@ -640,9 +645,16 @@ void MouseThereminDlg::OnPaintThereminWindow(wxPaintEvent& event)
 void MouseThereminDlg::OnSize(wxSizeEvent &event)
 {
 	wxDialog::OnSize(event);
-	wxSize size = _pnlDisplay->GetSize();
-	_bitmap = wxBitmap(_image.Scale(size.GetWidth(), size.GetHeight() ));
-	Refresh();
+	if( _pnlDisplay != NULL )
+	{
+		wxSize size = _pnlDisplay->GetSize();
+		_bitmap = wxBitmap(_image.Scale(size.GetWidth(), size.GetHeight() ));
+		Refresh();
+	}
+	else
+	{
+		//wxMessageBox::Show(_("Something's broken."));
+	}
 	event.Skip(false);
 }
 
