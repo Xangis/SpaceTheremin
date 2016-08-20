@@ -89,6 +89,7 @@ public:
     wxIcon GetIconResource( const wxString& name );
     /// Should we show tooltips?
     static bool ShowToolTips();
+	void RenderAudio( const void *input, void *output, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags);
 private:
     wxButton* _btnStartStop;
     wxPanel* _pnlDisplay;
@@ -123,7 +124,10 @@ private:
 	wxIcon _icon;
 	WaveTable* _waveTable;
         PaStream *_buffer;
+	wxSizer* _bottomRowSizer;
 };
+
+int AudioCallback( const void *input, void *output, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void *userData );
 
 #endif
     // _SPECTRUMDLG_H_

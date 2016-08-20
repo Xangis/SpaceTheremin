@@ -50,15 +50,15 @@
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">F:\lib\OpenAL 1.1 SDK\include;C:\Users\Xangis\code\StreamingAudioLib;F:\lib\wxWidgets-3.0.2\include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Xangis\code\StreamingAudioLib\;F:\lib\OpenAL 1.1 SDK\libs\Win32;F:\lib\wxWidgets-3.0.2\lib\vc_lib;$(LibraryPath)</LibraryPath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">F:\lib\OpenAL 1.1 SDK\include;C:\Users\Xangis\code\StreamingAudioLib;F:\lib\wxWidgets-3.0.2\include;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\Xangis\code\StreamingAudioLib;F:\lib\OpenAL 1.1 SDK\libs\Win32;F:\lib\wxWidgets-3.0.2\lib\vc_lib;$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSdkDir)lib;$(FrameworkSDKDir)\lib</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">F:\lib\pa_stable_v19_20140130\portaudio\include;F:\lib\wxWidgets-3.0.2\include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">F:\lib\pa_stable_v19_20140130\portaudio\build\msvc\Win32\Release;C:\Users\Xangis\code\StreamingAudioLib\;F:\lib\OpenAL 1.1 SDK\libs\Win32;F:\lib\wxWidgets-3.0.2\lib\vc_lib;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">F:\lib\pa_stable_v19_20140130\portaudio\include;F:\lib\wxWidgets-3.0.2\include;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">F:\lib\pa_stable_v19_20140130\portaudio\build\msvc\Win32\Release;C:\Users\Xangis\code\StreamingAudioLib;F:\lib\OpenAL 1.1 SDK\libs\Win32;F:\lib\wxWidgets-3.0.2\lib\vc_lib;$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSdkDir)lib;$(FrameworkSDKDir)\lib</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USE_OPENAL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -68,7 +68,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>wxmsw30ud_core.lib;wxbase30ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxmsw30ud_adv.lib;wxmsw30ud_html.lib;wxmsw30ud_xrc.lib;wxbase30ud_net.lib;wxbase30ud_xml.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;wsock32.lib;OpenAL32.lib;alut.lib;Audiod.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>portaudio_x86.lib;wxmsw30ud_core.lib;wxbase30ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxmsw30ud_adv.lib;wxmsw30ud_html.lib;wxmsw30ud_xrc.lib;wxbase30ud_net.lib;wxbase30ud_xml.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;wsock32.lib;OpenAL32.lib;alut.lib;Audiod.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)SpaceTheremin.exe</OutputFile>
       <AdditionalLibraryDirectories>..\..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -82,7 +82,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS:_USE_OPENAL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -90,7 +90,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>wxmsw30u_core.lib;wxbase30u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxmsw30u_adv.lib;wxmsw30u_html.lib;wxmsw30u_xrc.lib;wxbase30u_net.lib;wxbase30u_xml.lib;wxexpat.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;wsock32.lib;OpenAL32.lib;alut.lib;Audio.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>portaudio_x86.lib;wxmsw30u_core.lib;wxbase30u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxmsw30u_adv.lib;wxmsw30u_html.lib;wxmsw30u_xrc.lib;wxbase30u_net.lib;wxbase30u_xml.lib;wxexpat.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;wsock32.lib;OpenAL32.lib;alut.lib;Audio.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)SpaceTheremin.exe</OutputFile>
       <AdditionalLibraryDirectories>..\..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -110,6 +110,7 @@
     <ClInclude Include="Wavetable.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Changes.txt" />
     <None Include="wx\msw\blank.cur" />
     <None Include="wx\msw\bullseye.cur" />
     <None Include="wx\msw\colours.bmp" />
@@ -125,7 +126,6 @@
     <None Include="wx\msw\roller.cur" />
     <None Include="theremin.ico" />
     <None Include="thereminlarge.ico" />
-    <None Include="todo.txt" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="wxSpectrum.rc" />

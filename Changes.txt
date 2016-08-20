@@ -1,0 +1,8 @@
+Changes from Version 1.01 to 1.10:
+
+- Changed sound generation from OpenAL to PortAudio.
+- Changed modulation sizer to resize with window so it gets bigger if window is enlarged.
+
+Problems:
+
+- Waveforms are not correct. There seems to be some odd oscillator synchronization problem.

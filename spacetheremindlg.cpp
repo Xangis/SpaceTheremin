@@ -3,9 +3,11 @@
 #include "wx/aboutdlg.h"
 #include "wx/stdpaths.h"
 #include "spacetheremindlg.h"
+#include "info.xpm"
 #include <math.h>
 #define MIN_PITCH 20
 #define MAX_PITCH 8000
+#define BUFFERLENGTH 384
 
 #include <iostream>
 
@@ -46,13 +48,17 @@ END_EVENT_TABLE()
  */
 MouseThereminDlg::MouseThereminDlg( )
 {
+	_buffer = NULL;
 }
 
 MouseThereminDlg::~MouseThereminDlg()
 {
     PaError err = Pa_AbortStream( _buffer );
-    err = Pa_CloseStream( _buffer );
-    err = Pa_Terminate();
+	if( _buffer != NULL )
+	{
+		err = Pa_CloseStream( _buffer );
+	}
+	err = Pa_Terminate();
 
     // Give ourselves a few milliseconds for things to stop.
     Sleep(12);
@@ -68,6 +74,8 @@ MouseThereminDlg::MouseThereminDlg( wxWindow* parent, bool use_openal, wxWindowI
  */
 bool MouseThereminDlg::Create( wxWindow* parent, bool use_openal, wxWindowID id, const wxString& caption, const wxPoint& pos, const wxSize& size, long style )
 {
+	_bottomRowSizer = NULL;
+	_buffer = NULL;
 	_pnlDisplay = NULL;
 	_waveTable = new WaveTable();
     _useopenal = use_openal;
@@ -115,8 +123,6 @@ bool MouseThereminDlg::Create( wxWindow* parent, bool use_openal, wxWindowID id,
         wxMessageBox( _("PortAudio error: %s\n"), wxString::FromAscii(Pa_GetErrorText( err )) );
     }
 
-    // Above normal thread priority so we can monitor the sound buffer a little better.
-    Run();
     dlg = this;
 
     return true;
@@ -198,11 +204,11 @@ void MouseThereminDlg::CreateControls()
 	_btnStartStop = new wxButton( itemDialog1, ID_BUTTON_STARTSTOP, _("Start"));
 	itemBoxSizer9->Add(_btnStartStop, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
-	wxBoxSizer* itemBoxSizer19 = new wxBoxSizer(wxHORIZONTAL);
-    itemBoxSizer2->Add(itemBoxSizer19, 0, wxGROW, 0);
+	_bottomRowSizer = new wxBoxSizer(wxHORIZONTAL);
+    itemBoxSizer2->Add(_bottomRowSizer, 0, wxGROW, 0);
 
     wxStaticText* itemStaticText102 = new wxStaticText( itemDialog1, wxID_STATIC, _("Vibrato Wave"), wxDefaultPosition, wxDefaultSize, 0 );
-    itemBoxSizer19->Add(itemStaticText102, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE, 5);
+    _bottomRowSizer->Add(itemStaticText102, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE, 5);
 
     wxString waveforms2[] = {
         _("Sine"),
@@ -214,29 +220,29 @@ void MouseThereminDlg::CreateControls()
     };
     _vibratoWaveform = new wxChoice( itemDialog1, ID_VIBRATO_WAVEFORM, wxDefaultPosition, wxSize(90, -1), 6, waveforms2, 0 );
     _vibratoWaveform->SetStringSelection(_("Sine"));
-    itemBoxSizer19->Add(_vibratoWaveform, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 2);
+    _bottomRowSizer->Add(_vibratoWaveform, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     wxStaticText* itemStaticText107 = new wxStaticText( itemDialog1, wxID_STATIC, _("Vibrato Depth"), wxDefaultPosition, wxDefaultSize, 0 );
-    itemBoxSizer19->Add(itemStaticText107, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE, 5);
+    _bottomRowSizer->Add(itemStaticText107, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE, 5);
 
     _spnVibratoDepth = new wxSpinCtrl( itemDialog1, ID_SPIN_VIBRATODEPTH, _("0"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 100, 0 );
-    itemBoxSizer19->Add(_spnVibratoDepth, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 2 );
+    _bottomRowSizer->Add(_spnVibratoDepth, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 2 );
 
     wxStaticText* itemStaticText108 = new wxStaticText( itemDialog1, wxID_STATIC, _("Vibrato Freq"), wxDefaultPosition, wxDefaultSize, 0 );
-    itemBoxSizer19->Add(itemStaticText108, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE, 5);
+    _bottomRowSizer->Add(itemStaticText108, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE, 5);
 
 	_vibratoFreq = new wxSlider( itemDialog1, ID_SLIDER_VIBRATOFREQ, 10, 1, 120, wxDefaultPosition, wxSize(160,22), wxSL_HORIZONTAL );
-    itemBoxSizer19->Add(_vibratoFreq, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 2 );
+    _bottomRowSizer->Add(_vibratoFreq, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 2 );
 
     _vibratoText = new wxStaticText( itemDialog1, wxID_STATIC, _("1.0"), wxDefaultPosition, wxSize(42,16), 0 );
-    itemBoxSizer19->Add(_vibratoText, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE, 5);
+    _bottomRowSizer->Add(_vibratoText, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE, 5);
 
     _chkModulation = new wxCheckBox( itemDialog1, ID_CHECK_MODULATION, _("Modulation") );
-    itemBoxSizer19->Add(_chkModulation, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 2 );
+    _bottomRowSizer->Add(_chkModulation, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 2 );
 
-	wxBitmap infoBitmap( _("info.xpm"), wxBITMAP_TYPE_XPM );
+	wxBitmap infoBitmap(info_xpm, wxBITMAP_TYPE_XPM );
 	_btnAbout = new wxBitmapButton( itemDialog1, ID_ABOUT, infoBitmap, wxDefaultPosition, wxSize( 24, 24 ) );
-	itemBoxSizer19->Add(_btnAbout, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	_bottomRowSizer->Add(_btnAbout, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 }
 
 /*!
@@ -303,22 +309,25 @@ void MouseThereminDlg::OnVibratoWaveform(wxCommandEvent &event)
 
 void MouseThereminDlg::OnButtonStartStop(wxCommandEvent &event)
 {
+	PaError value;
 	_started = !_started;
-	if( _started )
+	if( !_started )
 	{
             value = Pa_AbortStream(_buffer);
             value = Pa_CloseStream(_buffer);
             _buffer = NULL;
+			_btnStartStop->SetLabel(_("Start"));
 	}
 	else
 	{
-            value = Pa_OpenStream(&_buffer, NULL, device, _sampleRate, BUFFERLENGTH, paNoFlag, AudioCallback, this );
+            value = Pa_OpenDefaultStream( &_buffer, 0, 2, paFloat32, _sampleRate, BUFFERLENGTH, AudioCallback, this );
             if( value != 0 )
             {
                 wxMessageBox(wxString::FromAscii(Pa_GetErrorText(value)));
                 return;
             }
             value = Pa_StartStream( _buffer );
+			_btnStartStop->SetLabel(_("Stop"));
 	}
 	event.Skip(false);
 }
@@ -326,16 +335,17 @@ void MouseThereminDlg::OnButtonStartStop(wxCommandEvent &event)
 // Turn noise back on when entering window if button is set to on.
 void MouseThereminDlg::OnMouseEnter( wxMouseEvent& event )
 {
-	if( _started )
-	{
-            value = Pa_OpenStream(&_buffer, NULL, device, _sampleRate, BUFFERLENGTH, paNoFlag, AudioCallback, this );
-            if( value != 0 )
-            {
-                wxMessageBox(wxString::FromAscii(Pa_GetErrorText(value)));
-                return;
-            }
-            value = Pa_StartStream( _buffer );
-	}
+	//PaError value;
+	//if( _started )
+	//{
+ //           value = Pa_OpenDefaultStream( &_buffer, 0, 2, paFloat32, _sampleRate, BUFFERLENGTH, AudioCallback, this );
+ //           if( value != 0 )
+ //           {
+ //               wxMessageBox(wxString::FromAscii(Pa_GetErrorText(value)));
+ //               return;
+ //           }
+ //           value = Pa_StartStream( _buffer );
+	//}
 	event.Skip(false);
 }
 
@@ -371,65 +381,54 @@ void MouseThereminDlg::OnMouseMove(wxMouseEvent& event)
 
 int AudioCallback( const void *input, void *output, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void *userData )
 {
+	MouseThereminDlg* dlg = (MouseThereminDlg*)userData;
+	if( dlg != NULL )
+	{
+		dlg->RenderAudio(input, output, frameCount, timeInfo, statusFlags);
+	}
+	return 0;
+}
+
+void MouseThereminDlg::RenderAudio( const void *input, void *output, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags)
+{
+	float* buffer = (float*) output;
+	memset(output, 0, (sizeof(float) * frameCount * 2));
+
 	static int mismatches = 0;
 	static int matches = 0;
-	while( !TestDestroy())
+	// Fill the buffer based on our waveform and frequency.
+	// We should add 10 msec of data per tick.
+	//
+	// We may need to tinker with data size and the timeBeginPeriod()
+	// and timeEndPeriod() functions from winmm.lib.
+	double samplesPerPeriod = _sampleRate / ((_pitch * (_maxFreq-_minFreq))+_minFreq);
+	// Get sampleSkip expressed as a percentage.
+	double sampleSkip = 1.0 / samplesPerPeriod;
+    double vibratoPerPeriod = _sampleRate / (_vibratoPitch * _vibratoFreq->GetMax());
+    double vibratoSkip = 1.0 / vibratoPerPeriod;
+	// Fill the buffer with samples.
+	int count;
+    float tmpval;
+	for( count = 0; count < frameCount; count++ )
 	{
-		// Fill the buffer based on our waveform and frequency.
-		// We should add 10 msec of data per tick.
-		//
-		// We may need to tinker with data size and the timeBeginPeriod()
-		// and timeEndPeriod() functions from winmm.lib.
-		if( _useopenal && _openal->IsBufferPlaying(0) )
+		while( _phase > 1.0 )
 		{
-			int left = _openal->GetNumSamplesQueued(0);
-			int right = _openal->GetNumSamplesQueued(1);
-			if( left != right )
-			{
-				++mismatches;
-				//wxMessageBox( "Synchronization mismatch!", "Error", wxOK );
-			}
-			else
-			{
-				++matches;
-			}
-			if( left < 1764 )
-			{
-				double samplesPerPeriod = _sampleRate / ((_pitch * (_maxFreq-_minFreq))+_minFreq);
-				// Get sampleSkip expressed as a percentage.
-				double sampleSkip = 1.0 / samplesPerPeriod;
-                                double vibratoPerPeriod = _sampleRate / (_vibratoPitch * _vibratoFreq->GetMax());
-                                double vibratoSkip = 1.0 / vibratoPerPeriod;
-				// Fill the buffer with samples.
-				int count;
-				short buffer[882];
-                                float tmpval;
-				memset( buffer, 0, 882 );
-				for( count = 0; count < 882; count++ )
-				{
-					while( _phase > 1.0 )
-					{
-						_phase -= 1.0;
-					}
-                                        while( _vibratoPhase > 1.0 )
-                                        {
-                                           _vibratoPhase -= 1.0;
-                                        }
-					//buffer[count] = sineTable[(int)(_phase * TABLESIZE)];
-                                        tmpval = ((_waveTable->_waveformTable[_wave][(int)(_phase * TABLESIZE)] * (1.0 - _vibratoDepth)) +
-                                                  (_waveTable->_waveformTable[_vibratoWave][(int)(_vibratoPhase * TABLESIZE)] * _vibratoDepth ));
-					buffer[count] = (short)(tmpval * (_volume * 32767.0));
-                                        std::cout << "Sample 0 of frame = " << buffer[0] << " sample 10 = " << buffer[9] << " and sample 881 of frame = " << buffer[881] << std::endl;
-					_phase += sampleSkip;
-                                        _vibratoPhase += vibratoSkip;
-				}
-				_openal->FillBuffer(0, (unsigned char*)&buffer, 1764, _sampleRate );
-				_openal->FillBuffer(1, (unsigned char*)&buffer, 1764, _sampleRate );
-			}
+			_phase -= 1.0;
 		}
-		Sleep(1);
+		while( _vibratoPhase > 1.0 )
+		{
+			_vibratoPhase -= 1.0;
+		}
+		// We use 75% volume level as standard so changing vibrato level doesn't decrease volume.
+		// This means that excessive vibrato could cause clipping.
+		tmpval = ((_waveTable->_waveformTable[_wave][(int)(_phase * TABLESIZE)] * 0.75) +
+					(_waveTable->_waveformTable[_vibratoWave][(int)(_vibratoPhase * TABLESIZE)] * _vibratoDepth ));
+		buffer[count * 2] = (tmpval * _volume);
+		buffer[count * 2 + 1] = buffer[count * 2];
+		_phase += sampleSkip;
+		_vibratoPhase += vibratoSkip;
 	}
-	return NULL;
+	return;
 }
 
 void MouseThereminDlg::OnVibratoSlider(wxCommandEvent &event )
@@ -527,6 +526,21 @@ void MouseThereminDlg::OnSize(wxSizeEvent &event)
 		wxSize size = _pnlDisplay->GetSize();
 		_bitmap = wxBitmap(_image.Scale(size.GetWidth(), size.GetHeight() ));
 		Refresh();
+		int screenWidth = size.GetWidth();
+		// Initial size: wxSize(160,22)
+		//wxMessageBox(wxString::Format(_("%d"), screenWidth));
+		int sliderWidth = screenWidth - 819;
+		if( sliderWidth < 160 )
+		{
+			sliderWidth = 160;
+		}
+		_vibratoFreq->SetSize(sliderWidth, 22);
+		if( _bottomRowSizer != NULL )
+		{
+			_bottomRowSizer->SetItemMinSize(_vibratoFreq, wxSize(sliderWidth, 22));
+			_bottomRowSizer->Layout();
+			//_bottomRowSizer->Fit();
+		}
 	}
 	else
 	{
@@ -557,13 +571,13 @@ void MouseThereminDlg::OnAbout( wxCommandEvent& event )
 	// Show about box.
     wxAboutDialogInfo info;
     info.SetName(_("SpaceTheremin"));
-    info.SetVersion(_("1.01"));
-    info.SetCopyright(_("(c) 2007-2013 Zeta Centauri"));
+    info.SetVersion(_("1.1"));
+    info.SetCopyright(_("(c) 2007-2016 Zeta Centauri"));
 	info.AddDeveloper(_("Jason Champion"));
 	info.SetIcon(_icon);
 	info.SetLicense(_("SpaceTheremin is free software and may be distributed freely.\nBackground image courtesy of NASA's hubblesite.org."));
 	info.SetWebSite(_("http://zetacentauri.com"));
-	info.SetDescription(_("SpaceTheremin uses the wxWidgets and OpenAL libraries."));
+	info.SetDescription(_("SpaceTheremin uses the wxWidgets and PortAudio libraries."));
 
     wxAboutBox(info);
     event.Skip(false);
