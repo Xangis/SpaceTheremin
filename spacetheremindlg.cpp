@@ -7,7 +7,7 @@
 #include <math.h>
 #define MIN_PITCH 20
 #define MAX_PITCH 8000
-#define BUFFERLENGTH 384
+#define BUFFERLENGTH 512
 
 #include <iostream>
 
@@ -185,13 +185,13 @@ void MouseThereminDlg::CreateControls()
     wxStaticText* itemStaticText105 = new wxStaticText( itemDialog1, wxID_STATIC, _("Min Freq"), wxDefaultPosition, wxDefaultSize, 0 );
     itemBoxSizer9->Add(itemStaticText105, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE, 5);
 
-	_spnMinFreq = new wxSpinCtrl( itemDialog1, ID_SPIN_MINFREQ, _("30"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, MIN_PITCH, MAX_PITCH, MIN_PITCH );
+	_spnMinFreq = new wxSpinCtrl( itemDialog1, ID_SPIN_MINFREQ, _("55"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, MIN_PITCH, MAX_PITCH, MIN_PITCH );
     itemBoxSizer9->Add(_spnMinFreq, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     wxStaticText* itemStaticText106 = new wxStaticText( itemDialog1, wxID_STATIC, _("Max Freq"), wxDefaultPosition, wxDefaultSize, 0 );
     itemBoxSizer9->Add(itemStaticText106, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE, 5);
 
-	_spnMaxFreq = new wxSpinCtrl( itemDialog1, ID_SPIN_MAXFREQ, _("2000"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, MIN_PITCH, MAX_PITCH, MAX_PITCH );
+	_spnMaxFreq = new wxSpinCtrl( itemDialog1, ID_SPIN_MAXFREQ, _("880"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, MIN_PITCH, MAX_PITCH, MAX_PITCH );
     itemBoxSizer9->Add(_spnMaxFreq, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     _chkLogPitch = new wxCheckBox( itemDialog1, ID_CHECK_LOGPITCH, _("Log Pitch") );

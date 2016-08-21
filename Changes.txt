@@ -2,6 +2,7 @@ Changes from Version 1.01 to 1.10:
 
 - Changed sound generation from OpenAL to PortAudio.
 - Changed modulation sizer to resize with window so it gets bigger if window is enlarged.
+- Changed default settings to be 55 to 880 Hz, or 4 octaves of A
 
 Problems:
 

@@ -8,7 +8,7 @@
 AppId={{DC6D93EB-D7E2-4309-B634-7F2A2E50D1D9}
 AppName=SpaceTheremin
 AppVerName=SpaceTheremin 1.1
-AppPublisher=Zeta Centauri, Inc.
+AppPublisher=Zeta Centauri
 AppPublisherURL=http://zetacentauri.com
 AppSupportURL=http://zetacentauri.com
 AppUpdatesURL=http://zetacentauri.com
