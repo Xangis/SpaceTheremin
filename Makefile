@@ -1,9 +1,9 @@
 # Vorbital makefile.  Requires wxWidgets.
 # by default, wx-config from the PATH is used
-WX_CONFIG := /usr/bin/wx-config
+WX_CONFIG := wx-config
 
 # Main executable file
-PROGRAM = SpaceTheremin
+PROGRAM = installer/SpaceTheremin.app/Contents/MacOS/SpaceTheremin
 
 # Object files
 OBJECTS = spacethereminapp.o spacetheremindlg.o Wavetable.o
@@ -18,7 +18,7 @@ CXX = $(shell $(WX_CONFIG) --cxx -ggdb)
 all:    $(PROGRAM)
 
 $(PROGRAM):	$(OBJECTS)
-	$(CXX) -o $(PROGRAM) $(OBJECTS) `$(WX_CONFIG) --libs` `pkg-config --cflags --libs jack`
+	$(CXX) -o $(PROGRAM) $(OBJECTS) `$(WX_CONFIG) --libs` -lportaudio
 
 clean: 
 	rm -f *.o $(PROGRAM)
