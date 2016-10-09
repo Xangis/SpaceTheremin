@@ -35,7 +35,7 @@ Source: "C:\users\Xangis\code\SpaceTheremin\Release\portaudio_x86.dll"; DestDir:
 Source: "C:\users\Xangis\code\SpaceTheremin\Release\background.jpg"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Xangis\code\SpaceTheremin\theremin.ico"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
-Source: "C:\users\Xangis\code\SpaceTheremin\Release\vcredist_x86.exe"; DestDir: "{app}"; Flags: ignoreversion deleteafterinstall
+Source: "C:\users\Xangis\code\SpaceTheremin\Release\vcredist2010_x86.exe"; DestDir: "{app}"; Flags: ignoreversion deleteafterinstall
 
 [Icons]
 Name: "{group}\SpaceTheremin"; Filename: "{app}\SpaceTheremin.exe"; WorkingDir: "{app}"
@@ -44,6 +44,6 @@ Name: "{commondesktop}\SpaceTheremin"; Filename: "{app}\SpaceTheremin.exe"; Task
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\SpaceTheremin"; Filename: "{app}\SpaceTheremin.exe"; Tasks: quicklaunchicon; WorkingDir: "{app}"
 
 [Run]
-Filename: "{app}\vcredist_x86.exe"; Parameters: "/q"; WorkingDir: "{app}";  StatusMsg: "Installing Visual C++ 2008 Redistributable..."; Flags: waituntilterminated
+Filename: "{app}\vcredist2010_x86.exe"; Parameters: "/q"; WorkingDir: "{app}";  StatusMsg: "Installing Visual C++ 2010 Redistributable..."; Flags: waituntilterminated
 Filename: "{app}\SpaceTheremin.exe"; Description: "{cm:LaunchProgram,SpaceTheremin}"; Flags: nowait postinstall skipifsilent
 
