@@ -3,7 +3,7 @@
 #include "wx/aboutdlg.h"
 #include "wx/stdpaths.h"
 #include "spacetheremindlg.h"
-#include "info.xpm"
+#include "info14px.xpm"
 #include <math.h>
 #define MIN_PITCH 20
 #define MAX_PITCH 8000
@@ -141,23 +141,27 @@ bool MouseThereminDlg::Create( wxWindow* parent, bool use_openal, wxWindowID id,
 void MouseThereminDlg::CreateControls()
 {
 	wxInitAllImageHandlers();
-#ifndef __APPLE_
+#ifndef __APPLE__
     wxString iconFile = _("theremin.ico");
     wxString backgroundFile = _("background.jpg");
 #else
-    wxString iconFile = wxString::Format(_("%s//%s"), wxStandardPaths::Get().GetResourcesDir(), _("theremin.ico"));
-    wxString backgroundFile = wxString::Format(_("%s//%s"), wxStandardPaths::Get().GetResourcesDir(), _("background.jpg"));
+    wxString iconFile = wxString::Format(_("%s/%s"), wxStandardPaths::Get().GetResourcesDir(), _("theremin.ico"));
+    wxString backgroundFile = wxString::Format(_("%s/%s"), wxStandardPaths::Get().GetResourcesDir(), _("background.jpg"));
 #endif
     _image.LoadFile( backgroundFile, wxBITMAP_TYPE_JPEG );
     if( !_image.IsOk() )
     {
-        wxMessageBox(_("Could not load background.jpg"), _("Image Not Found"));
+        wxMessageBox(wxString::Format(_("Could not load background %s"), backgroundFile), _("Image Not Found"));
     }
 
     _bitmap = wxBitmap(_image);
     if( _icon.LoadFile(iconFile, wxBITMAP_TYPE_ICO ))
     {
         SetIcon(_icon);
+    }
+    else
+    {
+        wxMessageBox(wxString::Format(_("Could not load icon %s"), iconFile), _("Image Not Found"));
     }
 
     MouseThereminDlg* itemDialog1 = this;
@@ -167,7 +171,7 @@ void MouseThereminDlg::CreateControls()
 
     _pnlDisplay = new wxPanel( itemDialog1, ID_PANEL, wxDefaultPosition, wxSize(800, 600), wxTAB_TRAVERSAL );
     _pnlDisplay->SetBackgroundColour(wxColour(0, 0, 0));
-    itemBoxSizer2->Add(_pnlDisplay, 1, wxALIGN_CENTER_HORIZONTAL|wxGROW|wxALL, 5);
+    itemBoxSizer2->Add(_pnlDisplay, 1, wxGROW|wxALL, 5);
 	_pnlDisplay->Connect(ID_PANEL, wxEVT_MOTION, wxMouseEventHandler(MouseThereminDlg::OnMouseMove), NULL, this);
 	_pnlDisplay->Connect(ID_PANEL, wxEVT_LEAVE_WINDOW, wxMouseEventHandler(MouseThereminDlg::OnMouseLeave), NULL, this );
 	_pnlDisplay->Connect(ID_PANEL, wxEVT_ENTER_WINDOW, wxMouseEventHandler(MouseThereminDlg::OnMouseEnter), NULL, this );
@@ -189,29 +193,29 @@ void MouseThereminDlg::CreateControls()
     };
     _waveform = new wxChoice( itemDialog1, ID_WAVEFORM, wxDefaultPosition, wxSize(90, -1), 6, waveforms, 0 );
     _waveform->SetStringSelection(_("Sine"));
-    itemBoxSizer9->Add(_waveform, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 2);
+    itemBoxSizer9->Add(_waveform, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     wxStaticText* itemStaticText105 = new wxStaticText( itemDialog1, wxID_STATIC, _("Min Freq"), wxDefaultPosition, wxDefaultSize, 0 );
     itemBoxSizer9->Add(itemStaticText105, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
 	_spnMinFreq = new wxSpinCtrl( itemDialog1, ID_SPIN_MINFREQ, _("55"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, MIN_PITCH, MAX_PITCH, MIN_PITCH );
-    itemBoxSizer9->Add(_spnMinFreq, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 2);
+    itemBoxSizer9->Add(_spnMinFreq, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     wxStaticText* itemStaticText106 = new wxStaticText( itemDialog1, wxID_STATIC, _("Max Freq"), wxDefaultPosition, wxDefaultSize, 0 );
     itemBoxSizer9->Add(itemStaticText106, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
 	_spnMaxFreq = new wxSpinCtrl( itemDialog1, ID_SPIN_MAXFREQ, _("880"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, MIN_PITCH, MAX_PITCH, MAX_PITCH );
-    itemBoxSizer9->Add(_spnMaxFreq, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 2);
+    itemBoxSizer9->Add(_spnMaxFreq, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     _chkLogPitch = new wxCheckBox( itemDialog1, ID_CHECK_LOGPITCH, _("Log Pitch") );
 	_chkLogPitch->SetValue(true);
-    itemBoxSizer9->Add(_chkLogPitch, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 2 );
+    itemBoxSizer9->Add(_chkLogPitch, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2 );
 
     _chkLogVolume = new wxCheckBox( itemDialog1, ID_CHECK_LOGVOLUME, _("Log Volume") );
-    itemBoxSizer9->Add(_chkLogVolume, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 2 );
+    itemBoxSizer9->Add(_chkLogVolume, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2 );
 
 	_btnStartStop = new wxButton( itemDialog1, ID_BUTTON_STARTSTOP, _("Start"));
-	itemBoxSizer9->Add(_btnStartStop, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 2);
+	itemBoxSizer9->Add(_btnStartStop, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
 	_bottomRowSizer = new wxBoxSizer(wxHORIZONTAL);
     itemBoxSizer2->Add(_bottomRowSizer, 0, wxGROW, 0);
@@ -229,27 +233,27 @@ void MouseThereminDlg::CreateControls()
     };
     _vibratoWaveform = new wxChoice( itemDialog1, ID_VIBRATO_WAVEFORM, wxDefaultPosition, wxSize(90, -1), 6, waveforms2, 0 );
     _vibratoWaveform->SetStringSelection(_("Sine"));
-    _bottomRowSizer->Add(_vibratoWaveform, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 2);
+    _bottomRowSizer->Add(_vibratoWaveform, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2);
 
     wxStaticText* itemStaticText107 = new wxStaticText( itemDialog1, wxID_STATIC, _("Vibrato Depth"), wxDefaultPosition, wxDefaultSize, 0 );
     _bottomRowSizer->Add(itemStaticText107, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     _spnVibratoDepth = new wxSpinCtrl( itemDialog1, ID_SPIN_VIBRATODEPTH, _("0"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 100, 0 );
-    _bottomRowSizer->Add(_spnVibratoDepth, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 2 );
+    _bottomRowSizer->Add(_spnVibratoDepth, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2 );
 
     wxStaticText* itemStaticText108 = new wxStaticText( itemDialog1, wxID_STATIC, _("Vibrato Freq"), wxDefaultPosition, wxDefaultSize, 0 );
     _bottomRowSizer->Add(itemStaticText108, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
 	_vibratoFreq = new wxSlider( itemDialog1, ID_SLIDER_VIBRATOFREQ, 10, 1, 120, wxDefaultPosition, wxSize(160,22), wxSL_HORIZONTAL );
-    _bottomRowSizer->Add(_vibratoFreq, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 2 );
+    _bottomRowSizer->Add(_vibratoFreq, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2 );
 
     _vibratoText = new wxStaticText( itemDialog1, wxID_STATIC, _("1.0"), wxDefaultPosition, wxSize(42,16), 0 );
     _bottomRowSizer->Add(_vibratoText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     _chkModulation = new wxCheckBox( itemDialog1, ID_CHECK_MODULATION, _("Modulation") );
-    _bottomRowSizer->Add(_chkModulation, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 2 );
+    _bottomRowSizer->Add(_chkModulation, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2 );
 
-	wxBitmap infoBitmap(info_xpm, wxBITMAP_TYPE_XPM );
+	wxBitmap infoBitmap(info14px_xpm, wxBITMAP_TYPE_XPM );
 	_btnAbout = new wxBitmapButton( itemDialog1, ID_ABOUT, infoBitmap, wxDefaultPosition, wxSize( 24, 24 ) );
 	_bottomRowSizer->Add(_btnAbout, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 }

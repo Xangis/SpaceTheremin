@@ -1,5 +1,5 @@
 /* XPM */
-static char * C:\Users\Xangis\code\SpaceTheremin\info14px_xpm[] = {
+static const char * info14px_xpm[] = {
 "14 14 51 1",
 " 	c None",
 ".	c #E5E4E8",
