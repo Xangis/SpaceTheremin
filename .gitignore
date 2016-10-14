@@ -20,3 +20,5 @@
 *.filters
 *.log
 *.tlog
+
+.DS_Store
