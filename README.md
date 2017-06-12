@@ -1,4 +1,4 @@
-= SpaceTheremin
+# SpaceTheremin
 
 A virtual theremin controlled via the mouse or touchscreen. This app was originally
 released for Windows on http://zetacentauri.com and later for OSX via the Apple Store.
@@ -31,7 +31,7 @@ That folder also includes prebuilt binaries, but those are likely out of date.
 
 This software is released under the terms of the MIT License.
 
-== Development Status
+## Development Status
 
 This application is no longer maintained, but I am willing to accept pull requests if you
 have improvements. There is definitely room for improvement, since it makes some
