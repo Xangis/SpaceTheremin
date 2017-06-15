@@ -71,21 +71,20 @@ MouseThereminDlg::~MouseThereminDlg()
 #endif
 }
 
-MouseThereminDlg::MouseThereminDlg( wxWindow* parent, bool use_openal, wxWindowID id, const wxString& caption, const wxPoint& pos, const wxSize& size, long style )
+MouseThereminDlg::MouseThereminDlg( wxWindow* parent, wxWindowID id, const wxString& caption, const wxPoint& pos, const wxSize& size, long style )
 {
-    Create(parent, use_openal, id, caption, pos, size, style);
+    Create(parent, id, caption, pos, size, style);
 }
 
 /*!
  * MouseThereminDlg creator
  */
-bool MouseThereminDlg::Create( wxWindow* parent, bool use_openal, wxWindowID id, const wxString& caption, const wxPoint& pos, const wxSize& size, long style )
+bool MouseThereminDlg::Create( wxWindow* parent, wxWindowID id, const wxString& caption, const wxPoint& pos, const wxSize& size, long style )
 {
 	_bottomRowSizer = NULL;
 	_buffer = NULL;
 	_pnlDisplay = NULL;
 	_waveTable = new WaveTable();
-    _useopenal = use_openal;
     _sampleRate = 44100; // Default. 
 	// Create a new stereo buffer.
     _waveform = NULL;
@@ -585,7 +584,7 @@ void MouseThereminDlg::OnAbout( wxCommandEvent& event )
     wxAboutDialogInfo info;
     info.SetName(_("SpaceTheremin"));
     info.SetVersion(_("1.1"));
-    info.SetCopyright(_("(c) 2007-2016 Zeta Centauri"));
+    info.SetCopyright(_("(c) 2007-2017 Jason Champion"));
 	info.AddDeveloper(_("Jason Champion"));
 	info.SetIcon(_icon);
 	info.SetLicense(_("SpaceTheremin is free software and may be distributed freely.\nBackground image courtesy of NASA's hubblesite.org."));

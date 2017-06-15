@@ -56,9 +56,9 @@ public:
     /// Constructors
     MouseThereminDlg( );
     ~MouseThereminDlg( );
-    MouseThereminDlg( wxWindow* parent, bool use_openal, wxWindowID id = SYMBOL_SPECTRUMDLG_IDNAME, const wxString& caption = SYMBOL_SPECTRUMDLG_TITLE, const wxPoint& pos = SYMBOL_SPECTRUMDLG_POSITION, const wxSize& size = SYMBOL_SPECTRUMDLG_SIZE, long style = SYMBOL_SPECTRUMDLG_STYLE );
+    MouseThereminDlg( wxWindow* parent, wxWindowID id = SYMBOL_SPECTRUMDLG_IDNAME, const wxString& caption = SYMBOL_SPECTRUMDLG_TITLE, const wxPoint& pos = SYMBOL_SPECTRUMDLG_POSITION, const wxSize& size = SYMBOL_SPECTRUMDLG_SIZE, long style = SYMBOL_SPECTRUMDLG_STYLE );
     /// Creation
-    bool Create( wxWindow* parent, bool use_openal, wxWindowID id = SYMBOL_SPECTRUMDLG_IDNAME, const wxString& caption = SYMBOL_SPECTRUMDLG_TITLE, const wxPoint& pos = SYMBOL_SPECTRUMDLG_POSITION, const wxSize& size = SYMBOL_SPECTRUMDLG_SIZE, long style = SYMBOL_SPECTRUMDLG_STYLE );
+    bool Create( wxWindow* parent, wxWindowID id = SYMBOL_SPECTRUMDLG_IDNAME, const wxString& caption = SYMBOL_SPECTRUMDLG_TITLE, const wxPoint& pos = SYMBOL_SPECTRUMDLG_POSITION, const wxSize& size = SYMBOL_SPECTRUMDLG_SIZE, long style = SYMBOL_SPECTRUMDLG_STYLE );
     void CreateControls();
     void OnButtonStartStop( wxCommandEvent& event );
 	void OnWaveform( wxCommandEvent& event );
@@ -120,7 +120,6 @@ private:
 	wxBitmap _bitmap;
 	wxImage _image;
     unsigned int _sampleRate;
-    bool _useopenal;
 	wxIcon _icon;
 	WaveTable* _waveTable;
         PaStream *_buffer;
