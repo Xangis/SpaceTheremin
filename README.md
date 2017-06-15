@@ -1,13 +1,42 @@
 # SpaceTheremin
 
 SpaceTheremin is a virtual theremin controlled via the mouse or touchscreen. This app 
-was originally released for Windows on http://zetacentauri.com and later for OSX via 
-the Apple Store. Across all versions it has been downloaded more than 65,000 times.
+was originally released for Windows on http://zetacentauri.com in 2007 and later for 
+OSX via the Apple Store as free but closed-source software. Across all versions it 
+has been downloaded more than 65,000 times.
 
 An prebuilt installable version for Windows is available in the installer folder:
 https://github.com/Xangis/SpaceTheremin/blob/master/installer/SpaceTheremin1.1Setup.exe
 
 ![SpaceTheremin Screenshot](https://github.com/Xangis/SpaceTheremin/blob/master/images/spacetheremin1.png)
+
+Unlike a standard analog theremin, which typically has a sinewave oscillator and some 
+basic vibrato, SpaceTheremin lets you choose from six different oscillator types 
+(sine, square, triangle, sinc, saw, and pulse). The same waveforms can also be used 
+for vibrato.
+
+It has an adjustable pitch range and checkboxes that let you select whether the pitch 
+and volume ranges are logarithmic or linear.
+
+Use of the vibrato can result in some incredibly freaky and bizarre sounds. Set the 
+vibrato depth (in percent) and adjust the vibrato frequency via the slider to hear 
+the effects. A vibrato depth of 50% and a triangle waveform gives an interesting 
+sound, for example.
+
+Although the vibrato frequency ranges from 0.1 to 12.0 Hz in 0.1 Hz increments, 
+checking the "modulation" box changes the range maximum to 8000. Moving this slider 
+into the audible frequency range (20Hz and up) allows you to get strange 
+two-oscillator frequency modulation sounds.
+
+Another neat trick is to use the tab and arrow keys to adjust parameters while playing 
+tones with the mouse. For instance, if the waveform is selected, the arrow keys will 
+change waveforms in mid-tone for an interesting effect. You can also do the same with 
+the vibrato waveform. Adjusting the vibrato frequency via the keyboard can also be handy.
+
+This program is more for generating strange sounds than for playing actual music. As 
+such, you may get some really horrible noises out of it. It would be incredibly 
+impressive if anyone managed to play a tune with it, even if it were something as simple 
+as "twinkle twinkle little star".
 
 This application has been tested on Windows, OSX and Linux, both 32-bit and 64-bit.
 It is written in C++ and uses wxWidgets for the user interface and PortAudio for sound
