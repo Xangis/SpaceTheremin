@@ -20,5 +20,6 @@
 *.filters
 *.log
 *.tlog
-
+ipch/
+Debug/
 .DS_Store
