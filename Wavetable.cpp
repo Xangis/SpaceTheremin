@@ -7,10 +7,10 @@
 void WaveTable::CreateWavetables()
 {
 	int count;
-    float nineTenths = (float)TABLESIZE * 0.95;
+    float nineTenths = (float)TABLESIZE * 0.95f;
 	for( count = 0; count < TABLESIZE; count++ )
 	{
-		_waveformTable[WAVEFORM_SINE][count] = (sin(2.0*PI*((float)count/(float)TABLESIZE)));
+		_waveformTable[WAVEFORM_SINE][count] = (sin(2.0f*PI*((float)count/(float)TABLESIZE)));
         if( count < nineTenths)
         {
 		    _waveformTable[WAVEFORM_SAW][count] = (((float)count / (float)nineTenths));
@@ -22,11 +22,11 @@ void WaveTable::CreateWavetables()
 		_waveformTable[WAVEFORM_SINC][count] = fabs(_waveformTable[WAVEFORM_SINE][count]);
 		if( count < (TABLESIZE/2))
 		{
-			_waveformTable[WAVEFORM_TRIANGLE][count] = (-1.0 + (2.0 * ((float)count*2.0 / (float)TABLESIZE)));
+			_waveformTable[WAVEFORM_TRIANGLE][count] = (-1.0 + (2.0f * ((float)count*2.0f / (float)TABLESIZE)));
 		}
 		else
 		{
-			_waveformTable[WAVEFORM_TRIANGLE][count] = (1.0 - (2.0 * ((float)((count - (TABLESIZE/2.0)) * 2.0) / (float)TABLESIZE)));
+			_waveformTable[WAVEFORM_TRIANGLE][count] = (1.0 - (2.0f * ((float)((count - (TABLESIZE/2.0f)) * 2.0f) / (float)TABLESIZE)));
 		}
 		if( count < (TABLESIZE/4))
 		{
@@ -46,7 +46,7 @@ void WaveTable::CreateWavetables()
 		}
         if( count < (TABLESIZE /3))
         {
-            _waveformTable[WAVEFORM_TRAPEZOID][count] = (float)count / ((float)TABLESIZE / 3.0);
+            _waveformTable[WAVEFORM_TRAPEZOID][count] = (float)count / ((float)TABLESIZE / 3.0f);
         }
         else if( count < (TABLESIZE * 2 / 3))
         {
@@ -54,7 +54,7 @@ void WaveTable::CreateWavetables()
         }
         else
         {
-            _waveformTable[WAVEFORM_TRAPEZOID][count] = ((float)count - ((float)TABLESIZE * 2.0 / 3.0)) / ((float)TABLESIZE / 3.0);
+            _waveformTable[WAVEFORM_TRAPEZOID][count] = ((float)count - ((float)TABLESIZE * 2.0f / 3.0f)) / ((float)TABLESIZE / 3.0f);
         }
 	}
 }
