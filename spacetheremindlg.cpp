@@ -252,7 +252,7 @@ void MouseThereminDlg::CreateControls()
     _chkModulation = new wxCheckBox( itemDialog1, ID_CHECK_MODULATION, _("Modulation") );
     _bottomRowSizer->Add(_chkModulation, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2 );
 
-	wxBitmap infoBitmap(info14px_xpm, wxBITMAP_TYPE_XPM );
+	wxBitmap infoBitmap(info14px_xpm);
 	_btnAbout = new wxBitmapButton( itemDialog1, ID_ABOUT, infoBitmap, wxDefaultPosition, wxSize( 24, 24 ) );
 	_bottomRowSizer->Add(_btnAbout, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 }
@@ -419,7 +419,7 @@ void MouseThereminDlg::RenderAudio( const void *input, void *output, unsigned lo
     double vibratoPerPeriod = _sampleRate / (_vibratoPitch * _vibratoFreq->GetMax());
     double vibratoSkip = 1.0 / vibratoPerPeriod;
 	// Fill the buffer with samples.
-	int count;
+	unsigned int count;
     float tmpval;
 	for( count = 0; count < frameCount; count++ )
 	{
